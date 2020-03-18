@@ -40,7 +40,7 @@ def earliest_ancestor(ancestors, starting_node):
         path = queue.dequeue()
         current_node = path[-1]
 
-        if (len(path) > longest_path_length) or current_node < earliest_so_far:
+        if (len(path) > longest_path_length) or (len(path) == longest_path_length and current_node < earliest_so_far):
             earliest_so_far = current_node
             longest_path_length = len(path)
 
