@@ -1,6 +1,27 @@
+import random
+
+
+class Queue():
+    def __init__(self):
+        self.queue = []
+
+    def enqueue(self, value):
+        self.queue.append(value)
+
+    def dequeue(self):
+        if self.size() > 0:
+            return self.queue.pop(0)
+        else:
+            return None
+
+    def size(self):
+        return len(self.queue)
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -14,11 +35,14 @@ class SocialGraph:
         """
         if user_id == friend_id:
             print("WARNING: You cannot be friends with yourself")
+            return False
         elif friend_id in self.friendships[user_id] or user_id in self.friendships[friend_id]:
             print("WARNING: Friendship already exists")
+            return False
         else:
             self.friendships[user_id].add(friend_id)
             self.friendships[friend_id].add(user_id)
+            return True
 
     def add_user(self, name):
         """
@@ -42,11 +66,33 @@ class SocialGraph:
         self.last_id = 0
         self.users = {}
         self.friendships = {}
-        # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(num_users):
+            self.add_user(f"user_{i}")
+
+        # O(N^2)
 
         # Create friendships
+        # friendships = []
+        # for user in self.users:
+        #     for friend in range(user + 1, self.last_id + 1):
+        #         friendships.append((user, friend))
+
+        # random.shuffle(friendships)
+
+        # for i in range(num_users * avg_friendships // 2):
+        #     self.add_friendship(friendships[i][0], friendships[i][1])
+
+        # O(N)
+        friendship_count = num_users * avg_friendships
+
+        while friendship_count != 0:
+            user = random.randint(1, num_users)
+            friend = random.randint(1, num_users)
+
+            if self.add_friendship(user, friend):
+                friendship_count -= 2
 
     def get_all_social_paths(self, user_id):
         """
@@ -57,8 +103,22 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
+        queue = Queue()
+        queue.enqueue([user_id])
+        visited = {}
+
+        while queue.size() > 0:
+            path = queue.dequeue()
+
+            current_friend = path[-1]
+
+            if current_friend not in visited:
+                visited[current_friend] = path
+                for friend in self.friendships[current_friend]:
+                    copy = path.copy()
+                    copy.append(friend)
+                    queue.enqueue(copy)
+
         return visited
 
 
