@@ -93,9 +93,9 @@ class Graph:
                 if vert == target_value:
                     return path
                 visited.add(vert)
-                for neighbors in self.vertices[vert]:
+                for next_vert in self.vertices[vert]:
                     new_path = list(path)
-                    new_path.append(neighbors)
+                    new_path.append(next_vert)
                     q.enqueue(new_path)
 
         return None
@@ -132,20 +132,14 @@ class Graph:
             visited = set()
         if path is None:
             path = []
-
-        if starting_vertex not in visited:
-            copy = path.copy()
-            copy.append(starting_vertex)
-
-            visited.add(starting_vertex)
-
-            if starting_vertex == target_value:
-                return copy
-            for vertex in self.get_neighbors(starting_vertex):
-                new_path = self.dfs_recursive(
-                    vertex, target_value, visited, copy)
-                if new_path is not None:
-                    return new_path
+        visited.add(starting_vertex)
+        path = path + [starting_vertex]
+        if starting_vertex == target_value:
+            return path
+        for vertex in self.get_neighbors(starting_vertex):
+            if vertex not in visited:
+                new = self.dfs_recursive(
+                    vertex, target_value, visited, path)
 
         return None
 
